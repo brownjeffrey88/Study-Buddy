@@ -27,7 +27,21 @@ namespace Studian
                 {
                     g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
                 }
-                bitmap.Save("C:\\test.jpg", ImageFormat.Jpeg);
+                bitmap.Save(textBox1.Text + "textBox1.Text" +".jpeg", ImageFormat.Jpeg);
+            }
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            //creates a folder browser dialogue, fills chosen folder into text box on form
+            FolderBrowserDialog folderDlg = new FolderBrowserDialog();
+            folderDlg.ShowNewFolderButton = true;
+            // Show the FolderBrowserDialog.
+            DialogResult result = folderDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBox1.Text = folderDlg.SelectedPath;
+                Environment.SpecialFolder root = folderDlg.RootFolder;
             }
         }
     }
