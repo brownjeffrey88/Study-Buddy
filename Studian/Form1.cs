@@ -27,13 +27,15 @@ namespace Studian
                 {
                     g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
                 }
-                bitmap.Save(textBox1.Text + "textBox1.Text" +".jpeg", ImageFormat.Jpeg);
+                string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + ".jpeg";
+                bitmap.Save(saveLocale, ImageFormat.Jpeg);
+                label2.Text = textBox2.Text + " saved to " + textBox1.Text;
             }
         }
-
+        //https://stackoverflow.com/questions/891345/get-a-screenshot-of-a-specific-application
         private void Button2_Click(object sender, EventArgs e)
         {
-            //creates a folder browser dialogue, fills chosen folder into text box on form
+            //creates a folder browser dialogue box, fills chosen folder address into text box on form
             FolderBrowserDialog folderDlg = new FolderBrowserDialog();
             folderDlg.ShowNewFolderButton = true;
             // Show the FolderBrowserDialog.
