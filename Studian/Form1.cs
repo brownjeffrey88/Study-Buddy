@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Studian.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,10 +12,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+//need to reset image count when filename textbox text is changed
+//comment everything
 namespace Studian
 {
     public partial class Form1 : Form
     {
+        //needs to be static for reference in screencap cs
+        public static string saveLocale = "";
+        int imageCount = 1;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
@@ -33,9 +40,10 @@ namespace Studian
         public Form1()
         {
             InitializeComponent();
-
+            
             int id = 0;     // The id of the hotkey. 
             RegisterHotKey(this.Handle, id, (int)KeyModifier.Shift, Keys.A.GetHashCode());
+            textBox1.Text = Properties.Settings.Default.DefaultSave;
         }
 
         string procName = "";
@@ -64,6 +72,7 @@ namespace Studian
             if (result == DialogResult.OK)
             {
                 textBox1.Text = folderDlg.SelectedPath;
+                saveLocale = textBox1.Text;
                 Environment.SpecialFolder root = folderDlg.RootFolder;
             }
         }
@@ -87,10 +96,10 @@ namespace Studian
                 int id = m.WParam.ToInt32();                                        // The id of the hotkey that was pressed.
 
 
-                MessageBox.Show("Hotkey has been pressed!");
                 var image = ScreenCapture.CaptureActiveWindow();
-                string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + ".jpeg";
+                string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + "-0" + (imageCount) + ".jpeg";
                 image.Save(saveLocale, ImageFormat.Jpeg);
+                imageCount++;
             }
         }
 

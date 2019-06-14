@@ -49,7 +49,9 @@ namespace Studian
             {
                 graphics.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             }
-
+            //sets save location default for next program launch
+            Properties.Settings.Default.DefaultSave = Form1.saveLocale;
+            Properties.Settings.Default.Save();
             return result;
         }
     }
