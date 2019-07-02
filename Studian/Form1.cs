@@ -15,6 +15,7 @@ using System.Windows.Forms;
 
 //need to reset image count when filename textbox text is changed
 //comment everything
+//need minimize to tray on closing function
 namespace Studian
 {
     public partial class Form1 : Form
@@ -22,6 +23,7 @@ namespace Studian
         //needs to be static for reference in screencap cs
         public static string saveLocale = "";
         int imageCount = 1;
+        string filename = "";
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
@@ -45,23 +47,7 @@ namespace Studian
             RegisterHotKey(this.Handle, id, (int)KeyModifier.Shift, Keys.A.GetHashCode());
             textBox1.Text = Properties.Settings.Default.DefaultSave;
         }
-
-        string procName = "";
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            var proc = Process.GetProcessesByName(procName)[0];
-            IntPtr Hnd = proc.MainWindowHandle;
-            Bitmap screenShot = ScreenCap.PrintWindow(Hnd);
-            string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + ".jpeg";
-            screenShot.Save(saveLocale, ImageFormat.Jpeg);
-
-            /*
-            string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + ".jpeg";
-            bitmap.Save(saveLocale, ImageFormat.Jpeg);
-            label2.Text = textBox2.Text + " saved to " + textBox1.Text;
-            */
-        }
+        
         private void Button2_Click(object sender, EventArgs e)
         {
             //creates a folder browser dialogue box, fills chosen folder address into text box on form
@@ -77,14 +63,11 @@ namespace Studian
             }
         }
 
-        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            procName = comboBox1.Text;
-        }
-
+        //where the save actually occurs
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
+
 
             if (m.Msg == 0x0312)
             {
@@ -97,9 +80,24 @@ namespace Studian
 
 
                 var image = ScreenCapture.CaptureActiveWindow();
+
+                if (filename != textBox2.Text)
+                {
+                    filename = textBox2.Text;
+                    imageCount = 1;
+                }
                 string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + "-0" + (imageCount) + ".jpeg";
-                image.Save(saveLocale, ImageFormat.Jpeg);
-                imageCount++;
+                try
+                {
+                    image.Save(saveLocale, ImageFormat.Jpeg);
+                    imageCount++;
+                }
+                catch (Exception)
+                {
+                    string message = "Please Specify a save location!";
+                    string title = "Error";
+                    MessageBox.Show(message, title);
+                }
             }
         }
 
