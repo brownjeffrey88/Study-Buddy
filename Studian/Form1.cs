@@ -44,7 +44,7 @@ namespace Studian
             InitializeComponent();
             
             int id = 0;     // The id of the hotkey. 
-            RegisterHotKey(this.Handle, id, (int)KeyModifier.Shift, Keys.A.GetHashCode());
+            RegisterHotKey(this.Handle, id, (int)KeyModifier.Control, Keys.Q.GetHashCode());
             textBox1.Text = Properties.Settings.Default.DefaultSave;
         }
         
@@ -96,14 +96,39 @@ namespace Studian
                 {
                     string message = "Please Specify a save location!";
                     string title = "Error";
-                    MessageBox.Show(message, title);
+                    MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 }
             }
         }
 
-        private void ExampleForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterHotKey(this.Handle, 0);       // Unregister hotkey with id 0 before closing the form. You might want to call this more than once with different id values if you are planning to register more than one hotkey.
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            //if the form is minimized
+            //hide it from the task bar
+            //and show the system tray icon (represented by the NotifyIcon control)
+            if (FormWindowState.Minimized == this.WindowState)
+            {
+                notifyIcon1.Visible = true;
+                notifyIcon1.ShowBalloonTip(500);
+                this.Hide();
+            }
+
+            else if (FormWindowState.Normal == this.WindowState)
+            {
+                notifyIcon1.Visible = false;
+            }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
         }
 
         private void Button2_Click_1(object sender, EventArgs e)
@@ -111,6 +136,13 @@ namespace Studian
             var image = ScreenCapture.CaptureActiveWindow();
             string saveLocale = @textBox1.Text + @"\" + @textBox2.Text + ".jpeg";
             image.Save(saveLocale, ImageFormat.Jpeg);
+        }
+
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
         }
     }
 
